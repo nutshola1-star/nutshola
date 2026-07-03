@@ -1,7 +1,7 @@
-import Image from "next/image";
+import React from 'react'
 
 export const metadata = {
-  title: 'Nutshola | Premium Nuts & Spices - সেরা মানের বাদাম ও মসলা',
+  title: 'All Products - Nutshola',
   description: 'Buy premium quality nuts, seeds, and spices online. Nutshola থেকে সুলভ মূল্যে কিনুন ১০০% ফ্রেশ ও খাঁটি বাদাম এবং রান্নার মসলা। Fast delivery across Bangladesh!',
   keywords: [
     'Nutshola',
@@ -23,8 +23,8 @@ export const metadata = {
     locale: 'en_US', 
     url: 'https://www.nutshola.com', // Replace with your actual domain
     siteName: 'Nutshola',
-    title: 'Nutshola | সেরা মানের বাদাম ও মসলা অনলাইনে',
-    description: 'Nutshola থেকে কিনুন ১০০% ফ্রেশ, খাঁটি বাদাম এবং রান্নার মসলা। Order your premium nuts and spices today!',
+    title: 'All Products - Nutshola',
+    description: 'Browse our wide selection of premium quality nuts, seeds, and spices online. Nutshola থেকে সুলভ মূল্যে কিনুন ১০০% ফ্রেশ ও খাঁটি বাদাম এবং রান্নার মসলা। Fast delivery across Bangladesh!',
     images: [
       {
         url: 'https://res.cloudinary.com/i8ldorjv/image/upload/v1782984009/NutsholaBanner_iimeqh.jpg', 
@@ -45,10 +45,10 @@ export const metadata = {
   },
 };
 
-export default function Home() {
+const AllProducts = () => {
   return (
-    <div className="text-black">
-      <h1>Welcome to Nutshola App</h1>
-    </div>
-  );
+    <div>All Products</div>
+  )
 }
+
+export default AllProducts

@@ -1,10 +1,11 @@
-import Image from "next/image";
+import React from 'react'
 
 export const metadata = {
-  title: 'Nutshola | Premium Nuts & Spices - সেরা মানের বাদাম ও মসলা',
-  description: 'Buy premium quality nuts, seeds, and spices online. Nutshola থেকে সুলভ মূল্যে কিনুন ১০০% ফ্রেশ ও খাঁটি বাদাম এবং রান্নার মসলা। Fast delivery across Bangladesh!',
+  title: 'Contact Us - Nutshola',
+  description: 'Get in touch with Nutshola for any inquiries or support. We are here to help you with all your premium nut and spice needs!',
   keywords: [
     'Nutshola',
+    'contact us',
     'premium nuts',
     'spices online BD',
     'সেরা মানের বাদাম',
@@ -45,10 +46,10 @@ export const metadata = {
   },
 };
 
-export default function Home() {
+const Contact = () => {
   return (
-    <div className="text-black">
-      <h1>Welcome to Nutshola App</h1>
-    </div>
-  );
+    <div>Contact</div>
+  )
 }
+
+export default Contact

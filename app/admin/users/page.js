@@ -1,7 +1,8 @@
-import Image from "next/image";
+// app/admin/users/page.js
+import UsersClient from './UsersClient';
 
 export const metadata = {
-  title: 'Nutshola | Premium Nuts & Spices - সেরা মানের বাদাম ও মসলা',
+  title: 'Users - Nutshola',
   description: 'Buy premium quality nuts, seeds, and spices online. Nutshola থেকে সুলভ মূল্যে কিনুন ১০০% ফ্রেশ ও খাঁটি বাদাম এবং রান্নার মসলা। Fast delivery across Bangladesh!',
   keywords: [
     'Nutshola',
@@ -45,10 +46,6 @@ export const metadata = {
   },
 };
 
-export default function Home() {
-  return (
-    <div className="text-black">
-      <h1>Welcome to Nutshola App</h1>
-    </div>
-  );
+export default function UsersPage() {
+  return <UsersClient />;
 }
