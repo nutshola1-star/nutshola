@@ -389,15 +389,14 @@ const Header = () => {
 
       {/* Mobile Header - Logo, Search, and Cart in one row */}
       <div className="md:hidden">
-        <div className="flex items-center gap-2 px-3 h-16">
+        <div className="flex items-center gap-1 h-15">
           {/* Logo */}
           <Link href="/" className="flex-shrink-0">
             <Image
               src={Logo}
               alt="logo"
-              height={40}
-              width={40}
-              className="bg-white rounded"
+              height={60}
+              width={100}
             />
           </Link>
 
@@ -420,10 +419,11 @@ const Header = () => {
                   w-full
                   bg-white 
                   text-[#3A393D] 
+                  text-xs
                   placeholder-gray-300 
-                  pl-4 pr-12 py-2.5
+                  pl-4 pr-12 py-1.5
                   rounded-full 
-                  border-2 border-transparent
+                  border-2 border-[#7ECB2A]
                   focus:border-[#559F34] 
                   focus:outline-none 
                   focus:bg-gray-50
@@ -522,7 +522,7 @@ const Header = () => {
           </div>
 
           {/* Cart Icon */}
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 text-[#7ECB2A] text-sm">
             <CartIcon />
           </div>
         </div>

@@ -22,7 +22,9 @@ export default function RootLayout({ children }) {
               {children}
               <ToastProvider />
             </div>
-            <Footer />
+            <div className="mb-10 md:mb-0">
+              <Footer />
+            </div>
           </CartProvider>
         </AuthProvider>
       </body>
