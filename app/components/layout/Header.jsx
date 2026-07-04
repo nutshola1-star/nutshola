@@ -166,10 +166,32 @@ const Header = () => {
     return badges[matchType] || badges.general;
   };
 
+  //categories section
+  const [categories, setCategories] = useState([]);
+  const [catfetchLoading, setCatFetchLoading] = useState(false);
+
+  const fetchCategories = async () => {
+    setCatFetchLoading(true);
+    try {
+      const response = await fetch("/api/category");
+      const data = await response.json();
+      setCategories(data.categories);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    } finally {
+      setCatFetchLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    //eslint-disable-next-line
+    fetchCategories();
+  }, []);
+
   return (
     <>
       {/* Desktop Header - visible only on md screens and up */}
-      <div className="hidden md:flex items-center justify-between h-20 z-100 overflow-hidden">
+      <div className="hidden px-2 md:px-4 lg:px-8 xl:px-16 2xl:px-32 md:flex items-center justify-between h-20 z-100 overflow-hidden">
         {/* LEFT */}
         <div className="flex items-center p-2 rounded-md">
           <Link href="/" className="flex items-center">
@@ -386,18 +408,12 @@ const Header = () => {
           <CartIcon />
         </div>
       </div>
-
       {/* Mobile Header - Logo, Search, and Cart in one row */}
       <div className="md:hidden">
-        <div className="flex items-center gap-1 h-15">
+        <div className="flex items-center gap-1 h-15 pr-1">
           {/* Logo */}
           <Link href="/" className="flex-shrink-0">
-            <Image
-              src={Logo}
-              alt="logo"
-              height={60}
-              width={100}
-            />
+            <Image src={Logo} alt="logo" height={60} width={100} />
           </Link>
 
           {/* Search Bar - Takes remaining space */}
@@ -530,6 +546,31 @@ const Header = () => {
 
       {/* Mobile Bottom Navigation */}
       <MobileMenu />
+      {/* category header */}
+      <div className="w-full bg-[#7ECB2A] h-7 text-white text-sm font-semibold py-1 hidden md:flex items-center justify-center">
+        {catfetchLoading
+          ? // Shimmer loading cards - 10 items
+            Array.from({ length: 10 }).map((_, index) => (
+              <div
+                key={index}
+                className="px-4 py-1 mx-1 relative overflow-hidden rounded"
+              >
+                <div className="w-16 h-4 bg-white/20 rounded relative overflow-hidden">
+                  {/* Shimmer animation overlay */}
+                  <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+                </div>
+              </div>
+            ))
+          : categories.map((category) => (
+              <Link
+                key={category._id}
+                href={`/category/${category.slug}`}
+                className="px-4 py-1 hover:underline transition-colors whitespace-nowrap"
+              >
+                {category.name}
+              </Link>
+            ))}
+      </div>
     </>
   );
 };

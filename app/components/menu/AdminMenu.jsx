@@ -44,12 +44,12 @@ const AdminMenu = ({ setMobileMenuOpen }) => {
       icon: <FaBoxes className="w-5 h-5" />,
       description: "Manage products"
     },
-    {
-      id: "inventory",
-      label: "Inventory",
-      href: "/admin/inventory", // Route to Inventory
-      icon: <FaWarehouse className="w-5 h-5" />,
-      description: "Stock management"
+     {
+      id: "orders",
+      label: "Orders",
+      href: "/admin/orders", // Route to Orders
+      icon: <FaShoppingCart className="w-5 h-5" />,
+      description: "Manage customer orders"
     },
     {
       id: "accounting",
@@ -59,11 +59,11 @@ const AdminMenu = ({ setMobileMenuOpen }) => {
       description: "Financial reports"
     },
     {
-      id: "orders",
-      label: "Orders",
-      href: "/admin/orders", // Route to Orders
-      icon: <FaShoppingCart className="w-5 h-5" />,
-      description: "Manage customer orders"
+      id: "users",
+      label: "Users",
+      href: "/admin/users", // Route to Users
+      icon: <FaUsers className="w-5 h-5" />,
+      description: "Manage user accounts"
     },
     {
       id: "services",
@@ -71,13 +71,6 @@ const AdminMenu = ({ setMobileMenuOpen }) => {
       href: "/admin/services", // Route to Services
       icon: <FaCog className="w-5 h-5" />,
       description: "Manage other services"
-    },
-    {
-      id: "users",
-      label: "Users",
-      href: "/admin/users", // Route to Users
-      icon: <FaUsers className="w-5 h-5" />,
-      description: "Manage user accounts"
     },
   ];
 

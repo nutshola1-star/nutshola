@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from '../../lib/mongodb';
 import Category from '../../models/Category';
+import Product from '../../models/Product';
 import { getCurrentUser } from '../../lib/authUtils';
 import cloudinary from '../../lib/cloudinary';
 import slugify from 'slugify';
@@ -370,12 +371,29 @@ export async function DELETE(request) {
 
     await connectToDatabase();
 
+    // Check if category exists
     const category = await Category.findById(categoryId);
     if (!category) {
       return NextResponse.json({
         success: false,
         message: 'Category not found'
       }, { status: 404 });
+    }
+
+    // Check if any products exist with this category
+    const productsWithCategory = await Product.find({ category: categoryId });
+    
+    if (productsWithCategory.length > 0) {
+      return NextResponse.json({
+        success: false,
+        message: `Cannot delete category. ${productsWithCategory.length} product(s) exist with this category. Please reassign or delete the products first.`,
+        productsCount: productsWithCategory.length,
+        products: productsWithCategory.map(p => ({ 
+          id: p._id, 
+          name: p.name,
+          SKU: p.SKU 
+        }))
+      }, { status: 409 }); // 409 Conflict status code
     }
 
     // Delete image from Cloudinary
