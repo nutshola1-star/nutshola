@@ -5,7 +5,7 @@ import dns from "dns";
 dns.setDefaultResultOrder("ipv4first");
 
 // Use the correct replica set name from discovery: atlas-r8h6ge-shard-0
-const MONGODB_URI = process.env.MONGODB_URI
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://nutshola1_db_user:QTLy1f2ctPIzrSdY@ac-stedzk1-shard-00-00.doqtdtj.mongodb.net:27017,ac-stedzk1-shard-00-01.doqtdtj.mongodb.net:27017,ac-stedzk1-shard-00-02.doqtdtj.mongodb.net:27017/nutshola?ssl=true&replicaSet=atlas-8pr18a-shard-0&authSource=admin&retryWrites=true&w=majority"
 
 let cached = global.mongoose;
 
