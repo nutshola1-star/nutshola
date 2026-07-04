@@ -7,7 +7,7 @@ import CartIcon from "../home/CartIcon";
 const MobileMenu = () => {
   return (
     // Fixed bottom navigation - only visible on mobile
-    <div className="fixed bottom-0 left-0 right-0 md:hidden bg-[#458328] border-t border-blue-800 shadow-lg">
+    <div className="fixed bottom-0 left-0 right-0 md:hidden bg-[#458328] border-t border-[#3A393D] shadow-lg">
       <div className="flex justify-around items-center py-3 text-white">
         <Link href="/" className="flex flex-col items-center text-xs">
           <MdHome className="text-2xl" />
