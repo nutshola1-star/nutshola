@@ -1,8 +1,7 @@
 // app/all-products/AllProductsClient.jsx
-
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -177,7 +176,8 @@ const ProductShimmer = () => (
   </div>
 );
 
-const AllProductsClient = () => {
+// Main content component that uses useSearchParams
+const AllProductsContent = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -472,6 +472,25 @@ const AllProductsClient = () => {
         )}
       </div>
     </div>
+  );
+};
+
+// Loading fallback component
+const ProductsLoadingFallback = () => (
+  <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div className="text-center">
+      <div className="w-16 h-16 border-4 border-[#559F34] border-t-transparent rounded-full animate-spin mx-auto"></div>
+      <p className="mt-4 text-gray-600 font-medium">Loading products...</p>
+    </div>
+  </div>
+);
+
+// Main component with Suspense boundary
+const AllProductsClient = () => {
+  return (
+    <Suspense fallback={<ProductsLoadingFallback />}>
+      <AllProductsContent />
+    </Suspense>
   );
 };
 
