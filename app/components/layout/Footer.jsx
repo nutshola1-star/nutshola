@@ -3,6 +3,7 @@ import Link from "next/link";
 import React from "react";
 import FooterLogout from "./FooterLogout";
 import Image from "next/image";
+import Logo from "../../assets/logo/WhiteBgLogo.png";
 import {
   FaFacebook,
   FaInstagram,
@@ -25,10 +26,12 @@ const Footer = () => {
           <div>
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center p-1">
-                <img
-                  src="/logo/WhiteBgLogo.png"
+                <Image
+                  src={Logo}
                   alt="Nutshola"
                   className="w-full h-full object-contain"
+                  width={48}
+                  height={48}
                 />
               </div>
               <div>
@@ -44,28 +47,16 @@ const Footer = () => {
             </p>
             <div className="flex gap-3 mt-4">
               <a
-                href="#"
+                href="https://www.facebook.com/nutshola/"
                 className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#7ECB2A] transition-colors"
               >
                 <FaFacebook size={16} />
               </a>
               <a
-                href="#"
+                href="https://www.instagram.com/nutshola/"
                 className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#7ECB2A] transition-colors"
               >
                 <FaInstagram size={16} />
-              </a>
-              <a
-                href="#"
-                className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#7ECB2A] transition-colors"
-              >
-                <FaYoutube size={16} />
-              </a>
-              <a
-                href="#"
-                className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#7ECB2A] transition-colors"
-              >
-                <FaTwitter size={16} />
               </a>
             </div>
           </div>
@@ -84,10 +75,10 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="/shop"
+                  href="/all-products"
                   className="hover:text-[#7ECB2A] transition-colors"
                 >
-                  Shop All
+                  All Products
                 </Link>
               </li>
               <li>
@@ -115,24 +106,24 @@ const Footer = () => {
             <ul className="space-y-3 text-sm text-white/70">
               <li className="flex items-start gap-3">
                 <FaMapMarkerAlt className="text-[#7ECB2A] mt-0.5 flex-shrink-0" />
-                <span>123, Dhaka, Bangladesh</span>
+                <span>Boardbazar, Gazipur, Bangladesh</span>
               </li>
               <li className="flex items-center gap-3">
                 <FaPhone className="text-[#7ECB2A] flex-shrink-0" />
                 <a
-                  href="tel:+8801234567890"
+                  href="tel:+8801903500222"
                   className="hover:text-white transition-colors"
                 >
-                  +880 1234-567890
+                  +880 1903 500 222
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <FaEnvelope className="text-[#7ECB2A] flex-shrink-0" />
                 <a
-                  href="mailto:info@nutshola.com"
+                  href="mailto:nutshola@gmail.com"
                   className="hover:text-white transition-colors"
                 >
-                  info@nutshola.com
+                  nutshola@gmail.com
                 </a>
               </li>
             </ul>

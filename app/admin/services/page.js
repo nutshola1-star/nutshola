@@ -1,8 +1,8 @@
-import React from 'react'
-import AllProductsClient from './AllProductsClient';
+// app/admin/services/page.js
+import ServicesClient from './ServicesClient';
 
 export const metadata = {
-  title: 'All Products - Nutshola',
+  title: 'Services Management - Nutshola',
   description: 'Buy premium quality nuts, seeds, and spices online. Nutshola থেকে সুলভ মূল্যে কিনুন ১০০% ফ্রেশ ও খাঁটি বাদাম এবং রান্নার মসলা। Fast delivery across Bangladesh!',
   keywords: [
     'Nutshola',
@@ -24,8 +24,8 @@ export const metadata = {
     locale: 'en_US', 
     url: 'https://www.nutshola.com', // Replace with your actual domain
     siteName: 'Nutshola',
-    title: 'All Products - Nutshola',
-    description: 'Browse our wide selection of premium quality nuts, seeds, and spices online. Nutshola থেকে সুলভ মূল্যে কিনুন ১০০% ফ্রেশ ও খাঁটি বাদাম এবং রান্নার মসলা। Fast delivery across Bangladesh!',
+    title: 'Nutshola | সেরা মানের বাদাম ও মসলা অনলাইনে',
+    description: 'Nutshola থেকে কিনুন ১০০% ফ্রেশ, খাঁটি বাদাম এবং রান্নার মসলা। Order your premium nuts and spices today!',
     images: [
       {
         url: 'https://res.cloudinary.com/i8ldorjv/image/upload/v1782984009/NutsholaBanner_iimeqh.jpg', 
@@ -46,10 +46,6 @@ export const metadata = {
   },
 };
 
-const AllProducts = () => {
-  return (
-    <div><AllProductsClient /></div>
-  )
+export default function ServicesPage() {
+  return <ServicesClient />;
 }
-
-export default AllProducts

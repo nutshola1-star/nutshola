@@ -410,7 +410,7 @@ const Header = () => {
       </div>
       {/* Mobile Header - Logo, Search, and Cart in one row */}
       <div className="md:hidden">
-        <div className="flex items-center gap-1 h-15 pr-1">
+        <div className="flex items-center gap-1 h-15 pr-3">
           {/* Logo */}
           <Link href="/" className="flex-shrink-0">
             <Image src={Logo} alt="logo" height={60} width={100} />

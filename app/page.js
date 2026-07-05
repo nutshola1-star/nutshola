@@ -1,4 +1,6 @@
 import Image from "next/image";
+import HomePageSlides from "./components/home/HomePageSlides";
+import HomeCategoryLinks from "./components/home/HomeCategoryLinks";
 
 export const metadata = {
   title: 'Nutshola | Premium Nuts & Spices - সেরা মানের বাদাম ও মসলা',
@@ -48,7 +50,8 @@ export const metadata = {
 export default function Home() {
   return (
     <div className="text-black">
-      <h1>Welcome to Nutshola App</h1>
+      <HomePageSlides/>
+      <HomeCategoryLinks/>
     </div>
   );
 }

@@ -77,6 +77,7 @@ const ProductsClient = () => {
   useEffect(() => {
     // eslint-disable-next-line
     fetchCategories();
+    // eslint-disable-next-line
     fetchProducts();
   }, []);
 

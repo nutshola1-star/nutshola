@@ -14,7 +14,7 @@ const MobileMenu = () => {
           <span>Home</span>
         </Link>
         
-        <Link href="/products" className="flex flex-col items-center text-xs">
+        <Link href="/all-products" className="flex flex-col items-center text-xs">
           <AiFillProduct className="text-2xl" />
           <span>Products</span>
         </Link>

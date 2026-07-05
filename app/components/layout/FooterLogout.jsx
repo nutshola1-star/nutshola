@@ -25,7 +25,7 @@ const FooterLogout = () => {
         className="flex items-center gap-1 text-white/60 hover:text-red-400 transition-colors"
       >
         <FaSignOutAlt size={14} />
-        Logout
+        <span className="hidden md:flex">Logout</span>
       </button>
     )
   );
