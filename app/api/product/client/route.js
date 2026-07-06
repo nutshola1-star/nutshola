@@ -1,4 +1,4 @@
-// app/api/product/client/route.js
+// app/api/product/client/route.js - Updated version
 
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "../../../lib/mongodb";
@@ -20,26 +20,36 @@ export async function GET(request) {
     const category = searchParams.get('category');
     const search = searchParams.get('search');
     
+    console.log("=== Product API Debug ===");
+    console.log("Received category param:", category);
+    console.log("Category param type:", typeof category);
+    
     const skip = (page - 1) * limit;
     
     // Build filter object
     const filter = { isActive: true };
     
-    // Category filter - handle both ID and slug
+    // Category filter
     if (category) {
       // Check if category is a valid ObjectId
       const isValidObjectId = /^[0-9a-fA-F]{24}$/.test(category);
+      console.log("Is valid ObjectId?", isValidObjectId);
+      
+      let categoryId;
       
       if (isValidObjectId) {
-        // It's an ID
-        filter.category = category;
+        // It's an ID - use it directly
+        categoryId = category;
+        console.log("Using category ID directly:", categoryId);
       } else {
-        // It's a slug - find the category by slug first
+        // It's a slug - find the category by slug
+        console.log("Looking up category by slug:", category);
         const categoryDoc = await Category.findOne({ slug: category });
         if (categoryDoc) {
-          filter.category = categoryDoc._id;
+          categoryId = categoryDoc._id;
+          console.log("Found category:", categoryDoc.name, "with ID:", categoryId);
         } else {
-          // Category not found, return empty results
+          console.log("Category not found for slug:", category);
           return NextResponse.json({
             success: true,
             products: [],
@@ -52,6 +62,9 @@ export async function GET(request) {
           });
         }
       }
+      
+      filter.category = categoryId;
+      console.log("Final category filter:", filter.category);
     }
     
     // Price range filter
@@ -77,6 +90,8 @@ export async function GET(request) {
         { SKU: { $regex: search, $options: 'i' } }
       ];
     }
+    
+    console.log("Final filter:", JSON.stringify(filter, null, 2));
     
     // Build sort object
     let sortOptions = {};
@@ -108,8 +123,11 @@ export async function GET(request) {
       .sort(sortOptions)
       .lean();
     
+    console.log(`Found ${products.length} products`);
+    
     // Get total count for pagination info
     const totalProducts = await Product.countDocuments(filter);
+    console.log(`Total products matching filter: ${totalProducts}`);
     
     return NextResponse.json(
       {
