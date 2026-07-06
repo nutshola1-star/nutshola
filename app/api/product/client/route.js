@@ -25,12 +25,36 @@ export async function GET(request) {
     // Build filter object
     const filter = { isActive: true };
     
-    // Category filter
+    // Category filter - handle both ID and slug
     if (category) {
-      filter.category = category;
+      // Check if category is a valid ObjectId
+      const isValidObjectId = /^[0-9a-fA-F]{24}$/.test(category);
+      
+      if (isValidObjectId) {
+        // It's an ID
+        filter.category = category;
+      } else {
+        // It's a slug - find the category by slug first
+        const categoryDoc = await Category.findOne({ slug: category });
+        if (categoryDoc) {
+          filter.category = categoryDoc._id;
+        } else {
+          // Category not found, return empty results
+          return NextResponse.json({
+            success: true,
+            products: [],
+            pagination: {
+              currentPage: page,
+              totalPages: 0,
+              totalProducts: 0,
+              perPage: limit,
+            },
+          });
+        }
+      }
     }
     
-    // Price range filter - checking pricing array for any price in range
+    // Price range filter
     if (minPrice || maxPrice) {
       filter['pricing'] = {
         $elemMatch: {}
@@ -58,7 +82,6 @@ export async function GET(request) {
     let sortOptions = {};
     switch (sort) {
       case 'price_asc':
-        // Sort by minimum price in pricing array
         sortOptions = { 'pricing.price': 1 };
         break;
       case 'price_desc':

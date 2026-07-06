@@ -183,7 +183,7 @@ const HomeCategoryLinks = () => {
               {/* Duplicate categories for infinite scroll effect */}
               {[...categories, ...categories, ...categories].map((category, index) => (
                 <Link 
-                  href={`/category/${category.slug}`} 
+                  href={`/categories/${category.slug}`} 
                   key={`${category._id}-${index}`}
                   className="flex flex-col items-center shrink-0 group/card w-[calc(50%-4px)] sm:w-36 md:w-48 cursor-pointer snap-start transition-transform duration-300 hover:scale-105"
                 >

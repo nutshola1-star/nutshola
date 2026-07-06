@@ -72,6 +72,9 @@ export const CartProvider = ({ children }) => {
         inventory: product.inventory || "",
         category: product.category || "",
         maxQuantity: product.quantity,
+        // Add weight information
+        weight: product.weight || null, // Store weight as string (e.g., "500g", "1kg")
+        weightInGrams: product.weightInGrams || null, // Store weight in grams for calculation
       };
 
       return [...prevItems, newItem];
@@ -110,6 +113,19 @@ export const CartProvider = ({ children }) => {
     return cartItems.reduce((count, item) => count + item.selectedQuantity, 0);
   }, [cartItems]);
 
+  // Calculate total weight of all items in grams
+  const getTotalWeight = useCallback(() => {
+    let totalWeightInGrams = 0;
+    
+    cartItems.forEach(item => {
+      if (item.weightInGrams && item.selectedQuantity) {
+        totalWeightInGrams += item.weightInGrams * item.selectedQuantity;
+      }
+    });
+    
+    return totalWeightInGrams / 1000; // Return weight in KG
+  }, [cartItems]);
+
   const isInCart = useCallback((productId) => {
     return cartItems.some((item) => item._id === productId);
   }, [cartItems]);
@@ -124,6 +140,7 @@ export const CartProvider = ({ children }) => {
         clearCart,
         getCartTotal,
         getCartCount,
+        getTotalWeight,
         isInCart,
       }}
     >

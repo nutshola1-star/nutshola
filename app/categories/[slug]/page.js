@@ -1,21 +1,20 @@
-// app/all-products/AllProductsClient.jsx
+// app/categories/[slug]/page.jsx
 "use client";
 
-import React, { useEffect, useState, useCallback, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import React, { useState, useEffect, useCallback, Suspense } from "react";
+import { useSearchParams, useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { useCart } from "../context/CartContext";
-import { FaFilter, FaSort, FaWeightHanging } from "react-icons/fa";
+import { useCart } from "../../context/CartContext";
+import { FaSort, FaArrowLeft } from "react-icons/fa";
 import toast from "react-hot-toast";
 
-// Product Card Component with Weight & Pricing
+// Product Card Component
 const ProductCard = ({ product }) => {
   const [imageError, setImageError] = useState(false);
   const { addToCart } = useCart();
   const [selectedVariant, setSelectedVariant] = useState(0);
 
-  // Format weight display (e.g., 1000g -> 1kg)
   const formatWeight = (weight, unit) => {
     if (weight >= 1000 && unit === "g") {
       return `${weight / 1000}kg`;
@@ -23,8 +22,6 @@ const ProductCard = ({ product }) => {
     return `${weight}${unit}`;
   };
 
-  // Handle Add to Cart submission
-  // In AllProductsClient.jsx - Update the handleAddToCart function
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -40,7 +37,6 @@ const ProductCard = ({ product }) => {
       : activePricing.price;
     const weightString = formatWeight(activePricing.weight, activePricing.unit);
 
-    // Calculate weight in grams for accurate calculation
     let weightInGrams = activePricing.weight;
     if (activePricing.unit === "kg") {
       weightInGrams = activePricing.weight * 1000;
@@ -50,11 +46,9 @@ const ProductCard = ({ product }) => {
       activePricing.unit === "piece" ||
       activePricing.unit === "pack"
     ) {
-      // For pieces or packs, we estimate weight or use a default
-      weightInGrams = 100; // Default 100g per piece/pack
+      weightInGrams = 100;
     }
 
-    // Create a unique cart item based on the selected variant
     const cartItem = {
       ...product,
       _id: `${product._id}-${activePricing.weight}${activePricing.unit}`,
@@ -62,7 +56,6 @@ const ProductCard = ({ product }) => {
       sellingPrice: currentPrice,
       originalPrice: activePricing.price,
       quantity: product.quantity || 99,
-      // Add weight information
       weight: weightString,
       weightInGrams: weightInGrams,
       selectedVariant: selectedVariant,
@@ -72,10 +65,8 @@ const ProductCard = ({ product }) => {
     addToCart(cartItem, 1);
   };
 
-  // If there's no pricing data, don't render the card
   if (!product.pricing || product.pricing.length === 0) return null;
 
-  // Derive currently displayed price based on the selected variant
   const activePricing = product.pricing[selectedVariant];
   const hasDiscount =
     activePricing.discountedPrice !== null &&
@@ -87,7 +78,6 @@ const ProductCard = ({ product }) => {
   return (
     <Link href={`/product/${product.slug}`}>
       <div className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer h-full flex flex-col border border-gray-100">
-        {/* Image Container */}
         <div className="relative aspect-square overflow-hidden bg-gray-100">
           {product.photos?.[0] && !imageError ? (
             <Image
@@ -104,28 +94,24 @@ const ProductCard = ({ product }) => {
             </div>
           )}
 
-          {/* Discount Badge */}
           {hasDiscount && (
             <div className="absolute top-2 left-2 bg-[#559F34] text-white text-[8px] md:text-xs font-bold px-1 md:px-2 py-0 md:py-1 rounded-full shadow-md">
               Save{" "}
               {Math.round(
                 ((activePricing.price - activePricing.discountedPrice) /
                   activePricing.price) *
-                  100,
+                  100
               )}
               %
             </div>
           )}
         </div>
 
-        {/* Product Info */}
         <div className="px-1 md:px-3 py-1 pb-3 flex-1 flex flex-col items-center text-center">
-          {/* Product Name */}
           <h3 className="text-sm md:text-lg font-bold text-[#3A393D] line-clamp-2 group-hover:text-[#559F34] transition-colors mb-1 md:mb-2">
             {product.name}
           </h3>
 
-          {/* Dynamic Price Display */}
           <div className="flex items-center justify-center gap-2 mb-1">
             {hasDiscount && (
               <span className="text-xs md:text-sm text-gray-400 line-through">
@@ -137,7 +123,6 @@ const ProductCard = ({ product }) => {
             </span>
           </div>
 
-          {/* Weight Selection Buttons */}
           <div className="flex flex-wrap justify-center gap-1 md:gap-2 mt-auto mb-4 w-full px-0 md:px-2">
             {product.pricing.map((pricing, index) => (
               <button
@@ -158,7 +143,6 @@ const ProductCard = ({ product }) => {
             ))}
           </div>
 
-          {/* Add To Cart Button */}
           <div className="w-full px-1 md:px-2">
             <button
               onClick={handleAddToCart}
@@ -196,21 +180,21 @@ const ProductShimmer = () => (
   </div>
 );
 
-// Main content component that uses useSearchParams
-const AllProductsContent = () => {
+// Main component
+const CategoryProducts = () => {
+  const params = useParams();
+  const slug = params.slug;
+  
   const searchParams = useSearchParams();
   const router = useRouter();
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [categories, setCategories] = useState([]);
-
-  // Filter state
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [category, setCategory] = useState(null);
+  const [totalProducts, setTotalProducts] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [totalProducts, setTotalProducts] = useState(0);
   const [activeFilters, setActiveFilters] = useState({
     sort: "newest",
     minPrice: undefined,
@@ -219,30 +203,37 @@ const AllProductsContent = () => {
 
   const itemsPerPage = 20;
 
-  // Fetch categories
-  const fetchCategories = async () => {
-    try {
-      const res = await fetch("/api/category");
-      const data = await res.json();
-      if (data.success) {
-        setCategories(data.categories);
-      }
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
-  };
-
-  // Fetch products with filters
-  const fetchProducts = useCallback(async () => {
+  // Fetch category and products
+  const fetchCategoryData = useCallback(async () => {
+    if (!slug) return;
+    
     setLoading(true);
     setError(null);
 
     try {
-      let url = `/api/product/client?page=${currentPage}&limit=${itemsPerPage}&sort=${activeFilters.sort}`;
-
-      if (selectedCategory) {
-        url += `&category=${selectedCategory}`;
+      console.log("Fetching category with slug:", slug);
+      
+      // Get category by slug
+      const categoryRes = await fetch(`/api/category/slug/${slug}`);
+      
+      if (!categoryRes.ok) {
+        throw new Error(`Category API error: ${categoryRes.status}`);
       }
+      
+      const categoryData = await categoryRes.json();
+      console.log("Category data:", categoryData);
+
+      if (!categoryData.success) {
+        throw new Error(categoryData.message || "Category not found");
+      }
+
+      setCategory(categoryData.category);
+      
+      // Now fetch products with the category ID
+      const categoryId = categoryData.category._id;
+      
+      let url = `/api/product/client?page=${currentPage}&limit=${itemsPerPage}&sort=${activeFilters.sort}&category=${categoryId}`;
+
       if (activeFilters.minPrice) {
         url += `&minPrice=${activeFilters.minPrice}`;
       }
@@ -250,44 +241,42 @@ const AllProductsContent = () => {
         url += `&maxPrice=${activeFilters.maxPrice}`;
       }
 
-      const res = await fetch(url);
-      const data = await res.json();
+      console.log("Fetching products from:", url);
 
-      if (data.success) {
-        setProducts(data.products || []);
-        setTotalPages(data.pagination?.totalPages || 1);
-        setTotalProducts(data.pagination?.totalProducts || 0);
+      const productsRes = await fetch(url);
+      
+      if (!productsRes.ok) {
+        throw new Error(`Products API error: ${productsRes.status}`);
+      }
+      
+      const productsData = await productsRes.json();
+      console.log("Products data:", productsData);
+
+      if (productsData.success) {
+        setProducts(productsData.products || []);
+        setTotalPages(productsData.pagination?.totalPages || 1);
+        setTotalProducts(productsData.pagination?.totalProducts || 0);
       } else {
-        throw new Error(data.message || "Failed to fetch products");
+        throw new Error(productsData.message || "Failed to fetch products");
       }
     } catch (error) {
-      console.error("Fetch products error:", error);
+      console.error("Fetch error:", error);
       setError(error.message);
       setProducts([]);
     } finally {
       setLoading(false);
     }
-  }, [
-    currentPage,
-    selectedCategory,
-    activeFilters.sort,
-    activeFilters.minPrice,
-    activeFilters.maxPrice,
-    itemsPerPage,
-  ]);
+  }, [currentPage, activeFilters.sort, activeFilters.minPrice, activeFilters.maxPrice, itemsPerPage, slug]);
 
   // Load filters from URL on mount
   useEffect(() => {
     const pageParam = searchParams.get("page");
     const sortParam = searchParams.get("sort");
-    const categoryParam = searchParams.get("category");
     const minPriceParam = searchParams.get("minPrice");
     const maxPriceParam = searchParams.get("maxPrice");
 
-    //eslint-disable-next-line
     if (pageParam) setCurrentPage(parseInt(pageParam));
     if (sortParam) setActiveFilters((prev) => ({ ...prev, sort: sortParam }));
-    if (categoryParam) setSelectedCategory(categoryParam);
     if (minPriceParam)
       setActiveFilters((prev) => ({
         ...prev,
@@ -298,61 +287,46 @@ const AllProductsContent = () => {
         ...prev,
         maxPrice: parseInt(maxPriceParam),
       }));
-
-    fetchCategories();
   }, [searchParams]);
 
-  // Fetch products when filters change
+  // Fetch data when slug or filters change
   useEffect(() => {
-    //eslint-disable-next-line
-    fetchProducts();
-  }, [fetchProducts]);
+    if (slug) {
+      fetchCategoryData();
+    }
+  }, [fetchCategoryData, slug]);
 
   // Update URL when filters change
   const updateURL = useCallback(
-    (filters, category, page) => {
+    (filters, page) => {
       const params = new URLSearchParams();
 
       if (page && page > 1) params.set("page", page);
       if (filters.sort && filters.sort !== "newest")
         params.set("sort", filters.sort);
-      if (category) params.set("category", category);
       if (filters.minPrice) params.set("minPrice", filters.minPrice);
       if (filters.maxPrice) params.set("maxPrice", filters.maxPrice);
 
       const queryString = params.toString();
       const newUrl = queryString
-        ? `/all-products?${queryString}`
-        : "/all-products";
+        ? `/categories/${slug}?${queryString}`
+        : `/categories/${slug}`;
 
       router.replace(newUrl, { scroll: false });
     },
-    [router],
+    [router, slug],
   );
 
   const handleSortChange = (sortValue) => {
     const newFilters = { ...activeFilters, sort: sortValue };
     setActiveFilters(newFilters);
     setCurrentPage(1);
-    updateURL(newFilters, selectedCategory, 1);
-  };
-
-  const handleFilterChange = (newFilters) => {
-    const updatedFilters = { ...activeFilters, ...newFilters };
-    setActiveFilters(updatedFilters);
-    setCurrentPage(1);
-    updateURL(updatedFilters, selectedCategory, 1);
-  };
-
-  const handleCategoryChange = (categoryId) => {
-    setSelectedCategory(categoryId);
-    setCurrentPage(1);
-    updateURL(activeFilters, categoryId, 1);
+    updateURL(newFilters, 1);
   };
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
-    updateURL(activeFilters, selectedCategory, newPage);
+    updateURL(activeFilters, newPage);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -364,47 +338,49 @@ const AllProductsContent = () => {
     { value: "name_desc", label: "Name: Z to A" },
   ];
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-1 md:px-4 py-6 md:py-8">
+          <div className="mb-6">
+            <div className="h-8 w-48 bg-gray-200 rounded animate-pulse"></div>
+          </div>
+          <ProductShimmer />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-1 md:px-4 py-6 md:py-8">
-        {/* Page Header */}
-        <div className="mb-6 md:mb-8">
-          <h1 className="text-xl md:text-3xl font-bold text-[#3A393D] text-center">
-            Our Products
-          </h1>
-          <p className="text-center text-gray-600 text-sm md:text-base mt-1 md:mt-2">
-            Total {totalProducts} products found
-          </p>
+        {/* Back Button & Category Header */}
+        <div className="mb-6">
+          <button
+            onClick={() => router.back()}
+            className="inline-flex items-center gap-2 text-[#3A393D] hover:text-[#559F34] transition-colors text-sm md:text-base mb-3"
+          >
+            <FaArrowLeft /> Back
+          </button>
+
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-xl md:text-3xl font-bold text-[#3A393D]">
+                {category?.name || "Category Products"}
+              </h1>
+              {category?.bengaliName && (
+                <p className="text-sm text-gray-500">{category.bengaliName}</p>
+              )}
+              <p className="text-gray-600 text-sm md:text-base mt-1">
+                Total {totalProducts} products found
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Filter Bar */}
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              onClick={() => handleCategoryChange(null)}
-              className={`px-2 md:px-4 py-1 md:py-2 rounded-lg text-xs md:text-sm transition-colors ${
-                selectedCategory === null
-                  ? "bg-[#559F34] text-white font-semibold"
-                  : "bg-white text-[#3A393D] hover:bg-gray-100"
-              }`}
-            >
-              All
-            </button>
-            {categories.map((cat) => (
-              <button
-                key={cat._id}
-                onClick={() => handleCategoryChange(cat._id)}
-                className={`px-2 md:px-4 py-1 md:py-2 rounded-lg text-xs md:text-sm transition-colors ${
-                  selectedCategory === cat._id
-                    ? "bg-[#559F34] text-white font-semibold"
-                    : "bg-white text-[#3A393D] hover:bg-gray-100"
-                }`}
-              >
-                {cat.name}
-              </button>
-            ))}
-          </div>
-
           <div className="flex items-center gap-2">
             <FaSort className="text-[#559F34]" />
             <select
@@ -426,7 +402,7 @@ const AllProductsContent = () => {
           <div className="text-center py-12">
             <p className="text-red-600 text-lg">Error: {error}</p>
             <button
-              onClick={() => fetchProducts()}
+              onClick={() => fetchCategoryData()}
               className="mt-4 px-4 py-2 bg-[#559F34] text-white rounded-lg hover:bg-[#45802A] transition-colors"
             >
               Retry
@@ -434,84 +410,73 @@ const AllProductsContent = () => {
           </div>
         )}
 
-        {loading ? (
-          <ProductShimmer />
-        ) : !error && products.length === 0 ? (
+        {!loading && products.length === 0 && !error ? (
           <div className="text-center py-12">
-            <p className="text-gray-600 text-lg">No products found</p>
+            <p className="text-gray-600 text-lg">
+              No products found in this category
+            </p>
           </div>
         ) : (
-          !error && (
-            <>
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 md:gap-6">
-                {products.map((product) => (
-                  <ProductCard key={product._id} product={product} />
-                ))}
-              </div>
+          <>
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 md:gap-6">
+              {products.map((product) => (
+                <ProductCard key={product._id} product={product} />
+              ))}
+            </div>
 
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="flex justify-center items-center gap-1 md:gap-2 mt-8 flex-wrap">
-                  <button
-                    onClick={() =>
-                      handlePageChange(Math.max(1, currentPage - 1))
-                    }
-                    disabled={currentPage === 1}
-                    className="px-2 md:px-4 py-1 md:py-2 text-xs md:text-base border rounded-lg text-[#3A393D] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
-                  >
-                    Previous
-                  </button>
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-1 md:gap-2 mt-8 flex-wrap">
+                <button
+                  onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                  className="px-2 md:px-4 py-1 md:py-2 text-xs md:text-base border rounded-lg text-[#3A393D] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
+                >
+                  Previous
+                </button>
 
-                  {[...Array(totalPages).keys()].map((num) => (
+                {[...Array(Math.min(totalPages, 5))].map((_, i) => {
+                  let pageNum;
+                  if (totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i;
+                  } else {
+                    pageNum = currentPage - 2 + i;
+                  }
+                  return (
                     <button
-                      key={num + 1}
-                      onClick={() => handlePageChange(num + 1)}
+                      key={pageNum}
+                      onClick={() => handlePageChange(pageNum)}
                       className={`px-2 md:px-4 py-1 md:py-2 text-xs md:text-base rounded-lg transition-colors ${
-                        currentPage === num + 1
+                        currentPage === pageNum
                           ? "bg-[#559F34] text-white font-bold"
                           : "text-[#3A393D] hover:bg-gray-100"
                       }`}
                     >
-                      {num + 1}
+                      {pageNum}
                     </button>
-                  ))}
+                  );
+                })}
 
-                  <button
-                    onClick={() =>
-                      handlePageChange(Math.min(totalPages, currentPage + 1))
-                    }
-                    disabled={currentPage === totalPages}
-                    className="px-2 md:px-4 py-1 md:py-2 text-xs md:text-base border rounded-lg text-[#3A393D] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
-                  >
-                    Next
-                  </button>
-                </div>
-              )}
-            </>
-          )
+                <button
+                  onClick={() =>
+                    handlePageChange(Math.min(totalPages, currentPage + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                  className="px-2 md:px-4 py-1 md:py-2 text-xs md:text-base border rounded-lg text-[#3A393D] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
   );
 };
 
-// Loading fallback component
-const ProductsLoadingFallback = () => (
-  <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-    <div className="text-center">
-      <div className="w-16 h-16 border-4 border-[#559F34] border-t-transparent rounded-full animate-spin mx-auto"></div>
-      <p className="mt-4 text-gray-600 font-medium">Loading products...</p>
-    </div>
-  </div>
-);
-
-// Main component with Suspense boundary
-const AllProductsClient = () => {
-  return (
-    <Suspense fallback={<ProductsLoadingFallback />}>
-      <AllProductsContent />
-    </Suspense>
-  );
-};
-
-export default AllProductsClient;
+export default CategoryProducts;

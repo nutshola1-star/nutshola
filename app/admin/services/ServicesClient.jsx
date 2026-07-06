@@ -6,20 +6,11 @@ import React, { useState } from "react";
 import AdminMenu from "../../components/menu/AdminMenu";
 import {
   FaBars,
-  FaTimes,
-  FaEdit,
-  FaUser,
-  FaEnvelope,
-  FaPhone,
-  FaMapMarkerAlt,
-  FaCity,
-  FaGlobe,
-  FaSave,
-  FaTimesCircle,
-  FaUserCog,
+  FaTimes
 } from "react-icons/fa";
 import HomeSlides from "./HomeSlides";
 import Coupons from "./Coupons";
+import CourierCharges from "./CourierCharges";
 
 const ServicesClient = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -36,6 +27,10 @@ const ServicesClient = () => {
       id: "coupons",
       name: "Coupons",
     },
+    {
+      id: "courier-charges",
+      name: "Courier Charges",
+    },
   ];
 
   const renderService = () => {
@@ -44,6 +39,8 @@ const ServicesClient = () => {
         return <HomeSlides />;
       case "coupons":
         return <Coupons />;
+      case "courier-charges":
+        return <CourierCharges />;
       default:
         return <HomeSlides />;
     }

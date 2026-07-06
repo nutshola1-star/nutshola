@@ -10,7 +10,7 @@ const CartIcon = () => {
       <>
         <FaShoppingCart className="text-xl hover:text-[#7ECB2A]" />
         {cartItems?.length > 0 && (
-          <span className="absolute bg-[#3A393D] text-white px-1  rounded-2xl text-xs top-4 ml-[15px]">
+          <span className="absolute bg-[#3A393D] text-white px-1  rounded-2xl text-xs top-5 ml-[15px]">
             {cartItems?.length}
           </span>
         )}

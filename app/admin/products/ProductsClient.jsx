@@ -813,15 +813,15 @@ const ProductsClient = () => {
                 Products Management
               </h3>
               <div className="text-white flex items-center gap-4">
-                <button
+                <span
                   onClick={(e) => {
                     e.stopPropagation();
                     openAddProductModal();
                   }}
-                  className="flex items-center gap-2 px-3 py-1 bg-white text-[#559F34] rounded-lg hover:bg-gray-100 transition-colors text-sm"
+                  className="flex items-center gap-2 px-3 py-1 bg-white text-[#559F34] rounded-lg hover:bg-gray-100 transition-colors text-sm cursor-pointer"
                 >
                   <FaPlus /> Add Product
-                </button>
+                </span>
                 {isProductOpen ? <FaMinus size={20} /> : <FaPlus size={20} />}
               </div>
             </button>
