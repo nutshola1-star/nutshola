@@ -3,6 +3,7 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "../../../lib/mongodb";
 import Product from "../../../models/Product";
+import Category from "../../../models/Category";
 
 // GET - Fetch products with filtering, sorting, and pagination
 export async function GET(request) {
