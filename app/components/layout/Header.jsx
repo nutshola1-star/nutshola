@@ -61,6 +61,7 @@ const Header = () => {
         fetchSuggestions(searchQuery);
       }, 200); // 200ms for smooth character-by-character search
     } else {
+      //eslint-disable-next-line
       setSuggestions([]);
       setIsLoadingSuggestions(false);
     }

@@ -97,6 +97,14 @@ const Footer = () => {
                   Contact Us
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/track-order"
+                  className="hover:text-[#7ECB2A] transition-colors"
+                >
+                  Track Order
+                </Link>
+              </li>
             </ul>
           </div>
 

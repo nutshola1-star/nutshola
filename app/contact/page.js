@@ -1,4 +1,6 @@
-import React from 'react'
+// app/contact/page.jsx
+import React from 'react';
+import ContactClient from './ContactClient';
 
 export const metadata = {
   title: 'Contact Us - Nutshola',
@@ -22,10 +24,10 @@ export const metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US', 
-    url: 'https://www.nutshola.com', // Replace with your actual domain
+    url: 'https://www.nutshola.com',
     siteName: 'Nutshola',
-    title: 'Nutshola | সেরা মানের বাদাম ও মসলা অনলাইনে',
-    description: 'Nutshola থেকে কিনুন ১০০% ফ্রেশ, খাঁটি বাদাম এবং রান্নার মসলা। Order your premium nuts and spices today!',
+    title: 'Contact Us - Nutshola | Premium Nuts & Spices',
+    description: 'Get in touch with Nutshola for premium quality nuts, spices, and exceptional customer service.',
     images: [
       {
         url: 'https://res.cloudinary.com/i8ldorjv/image/upload/v1782984009/NutsholaBanner_iimeqh.jpg', 
@@ -47,9 +49,7 @@ export const metadata = {
 };
 
 const Contact = () => {
-  return (
-    <div>Contact</div>
-  )
-}
+  return <ContactClient />;
+};
 
-export default Contact
+export default Contact;

@@ -1,4 +1,4 @@
-// app/lib/mongodb.js - FINAL WORKING VERSION
+// app/lib/mongodb.js - 
 import mongoose from "mongoose";
 import dns from "dns";
 

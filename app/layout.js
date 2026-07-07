@@ -5,6 +5,7 @@ import { CartProvider } from "./context/CartContext";
 import ToastProvider from "./components/ToastProvider";
 import Footer from "./components/layout/Footer";
 import { AuthProvider } from "./context/AuthContext";
+import Whatsapp from "./components/layout/Whatsapp.jsx"
 
 export default function RootLayout({ children }) {
   return (
@@ -22,7 +23,8 @@ export default function RootLayout({ children }) {
               {children}
               <ToastProvider />
             </div>
-            <div className="mb-12 md:mb-0">
+            <Whatsapp/>
+            <div className="mb-15 md:mb-0">
               <Footer />
             </div>
           </CartProvider>
