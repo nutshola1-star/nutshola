@@ -615,7 +615,7 @@ const TrackOrderClient = () => {
               Please check your {searchType === "order" ? "order number" : "phone number"} and try again.
               {searchType === "phone" && (
                 <span className="block mt-1">
-                  Make sure you're using the same phone number you provided when placing the order.
+                  Make sure {"you're"} using the same phone number you provided when placing the order.
                 </span>
               )}
             </p>

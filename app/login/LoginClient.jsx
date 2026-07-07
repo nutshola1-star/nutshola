@@ -19,7 +19,7 @@ export default function LoginClient() {
     if (!loading && isAuthenticated) {
       // Redirect admin to dashboard, regular users to home
       if (user?.role === 1) {
-        router.push('/admin/dashboard');
+        router.push('/admin/profile');
       } else {
         router.push('/');
       }
@@ -37,7 +37,7 @@ export default function LoginClient() {
     } else {
       // Redirect based on role
       if (result.user?.role === 1) {
-        router.push('/admin/dashboard');
+        router.push('/admin/profile');
       } else {
         router.push('/');
       }

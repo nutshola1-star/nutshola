@@ -23,14 +23,7 @@ const AdminMenu = ({ setMobileMenuOpen }) => {
 
   // Added 'href' to every item to dictate where the link goes
   const menuItems = [
-    {
-      id: "dashboard",
-      label: "Dashboard",
-      href: "/admin/dashboard", // Route to Dashboard
-      icon: <FaTachometerAlt className="w-5 h-5" />,
-      description: "Main overview"
-    },
-    {
+        {
       id: "profile",
       label: "Profile",
       href: "/admin/profile", // Route to Profile

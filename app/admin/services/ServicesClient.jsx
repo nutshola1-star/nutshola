@@ -11,6 +11,7 @@ import {
 import HomeSlides from "./HomeSlides";
 import Coupons from "./Coupons";
 import CourierCharges from "./CourierCharges";
+import HomeReviews from "./HomeReviews";
 
 const ServicesClient = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -31,6 +32,10 @@ const ServicesClient = () => {
       id: "courier-charges",
       name: "Courier Charges",
     },
+    {
+      id: "home-reviews",
+      name: "Home Reviews",
+    },
   ];
 
   const renderService = () => {
@@ -41,6 +46,8 @@ const ServicesClient = () => {
         return <Coupons />;
       case "courier-charges":
         return <CourierCharges />;
+      case "home-reviews":
+        return <HomeReviews />;
       default:
         return <HomeSlides />;
     }
