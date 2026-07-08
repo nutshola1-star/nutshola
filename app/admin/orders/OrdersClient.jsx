@@ -63,6 +63,40 @@ const OrdersClient = () => {
 
   const perPageOptions = [5, 10, 20, 50, 100];
 
+  //steadfast integration
+  const [isGeneratingTracking, setIsGeneratingTracking] = useState(false);
+
+  // Generate Steadfast Tracking
+  const handleGenerateTracking = async () => {
+    if (!editingOrder) return;
+    setIsGeneratingTracking(true);
+
+    try {
+      const response = await fetch("/api/orders/steadfast", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId: editingOrder._id }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast.success("Order sent to Steadfast!");
+        // Update the input field in the edit modal immediately
+        setEditFormData((prev) => ({ ...prev, shippingId: data.trackingCode }));
+        // Refresh the main orders table
+        fetchOrders();
+      } else {
+        toast.error(data.message || "Failed to generate tracking ID");
+      }
+    } catch (error) {
+      console.error("Steadfast generation error:", error);
+      toast.error("Failed to connect to Steadfast server");
+    } finally {
+      setIsGeneratingTracking(false);
+    }
+  };
+
   // Fetch orders
   const fetchOrders = async () => {
     try {
@@ -337,20 +371,26 @@ const OrdersClient = () => {
             <div class="order-info">
               <div>
                 <div class="label">Order Date</div>
-                <div class="value">${new Date(order.createdAt).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit'
+                <div class="value">${new Date(
+                  order.createdAt,
+                ).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
                 })}</div>
               </div>
-              ${order.shippingId ? `
+              ${
+                order.shippingId
+                  ? `
               <div>
                 <div class="label">Shipping ID</div>
                 <div class="value">${order.shippingId}</div>
               </div>
-              ` : ''}
+              `
+                  : ""
+              }
             </div>
 
             <!-- Customer Info -->
@@ -364,7 +404,7 @@ const OrdersClient = () => {
                 <div class="label">Delivery Address</div>
                 <div class="value">${order.customer.address}</div>
                 <div style="color:#6b7280;font-size:13px;margin-top:4px;">
-                  ${order.customer.thana ? order.customer.thana + ', ' : ''}${order.customer.district}
+                  ${order.customer.thana ? order.customer.thana + ", " : ""}${order.customer.district}
                 </div>
               </div>
             </div>
@@ -381,15 +421,19 @@ const OrdersClient = () => {
                 </tr>
               </thead>
               <tbody>
-                ${order.items.map(item => `
+                ${order.items
+                  .map(
+                    (item) => `
                   <tr>
                     <td>${item.name}</td>
-                    <td>${item.weight || 'N/A'}</td>
+                    <td>${item.weight || "N/A"}</td>
                     <td class="text-right">${item.quantity}</td>
                     <td class="text-right">৳${item.price.toFixed(2)}</td>
                     <td class="text-right">৳${item.total.toFixed(2)}</td>
                   </tr>
-                `).join('')}
+                `,
+                  )
+                  .join("")}
               </tbody>
             </table>
 
@@ -399,12 +443,16 @@ const OrdersClient = () => {
                 <span>Subtotal</span>
                 <span>৳${order.subtotal.toFixed(2)}</span>
               </div>
-              ${order.discount > 0 ? `
+              ${
+                order.discount > 0
+                  ? `
               <div class="summary-row" style="color:#059669;">
                 <span>Discount</span>
                 <span>- ৳${order.discount.toFixed(2)}</span>
               </div>
-              ` : ''}
+              `
+                  : ""
+              }
               <div class="summary-row">
                 <span>Delivery Charge</span>
                 <span>৳${order.deliveryCharge.toFixed(2)}</span>
@@ -1153,6 +1201,44 @@ const OrdersClient = () => {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#559F34] text-sm text-gray-600 resize-none"
                       placeholder="Add notes about this order..."
                     />
+                  </div>
+
+                  {/* Shipping ID with Steadfast Integration */}
+                  <div>
+                    <label className="block text-sm font-medium text-[#3A393D] mb-1">
+                      Shipping ID / Tracking Number
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        name="shippingId"
+                        value={editFormData.shippingId}
+                        onChange={handleEditChange}
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#559F34] text-sm text-gray-600"
+                        placeholder="Enter shipping ID"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleGenerateTracking}
+                        disabled={
+                          isGeneratingTracking || editFormData.shippingId
+                        }
+                        className="px-4 py-2 bg-[#3A393D] text-white rounded-lg hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium"
+                        title={
+                          editFormData.shippingId
+                            ? "Tracking ID already generated"
+                            : "Send to Steadfast"
+                        }
+                      >
+                        {isGeneratingTracking ? (
+                          <>
+                            <FaSpinner className="animate-spin" /> Sending...
+                          </>
+                        ) : (
+                          "Load to Steadfast"
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
 
