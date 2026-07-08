@@ -128,10 +128,10 @@ const Footer = () => {
               <li className="flex items-center gap-3">
                 <FaEnvelope className="text-[#7ECB2A] flex-shrink-0" />
                 <a
-                  href="mailto:nutshola@gmail.com"
+                  href="mailto:nutshola1@gmail.com"
                   className="hover:text-white transition-colors"
                 >
-                  nutshola@gmail.com
+                  nutshola1@gmail.com
                 </a>
               </li>
             </ul>
@@ -170,19 +170,13 @@ const Footer = () => {
             </p>
             <div className="flex items-center text-xs md:text-sm gap-2 md:gap-6 text-white/60">
               <Link
-                href="/privacy-policy"
-                className="hover:text-[#7ECB2A] text-center transition-colors"
-              >
-                Privacy Policy
-              </Link>
-              <Link
                 href="/terms"
                 className="hover:text-[#7ECB2A] text-center transition-colors"
               >
                 Terms of Service
               </Link>
               <Link
-                href="/shipping"
+                href="/shipping-info"
                 className="hover:text-[#7ECB2A] text-center transition-colors"
               >
                 Shipping Info
@@ -190,7 +184,7 @@ const Footer = () => {
 
               <>
                 <Link
-                  href="/admin/dashboard"
+                  href="/admin/profile"
                   className="hover:text-[#7ECB2A] transition-colors"
                 >
                   Dashboard

@@ -4,10 +4,10 @@ import { connectToDatabase } from "../../../lib/mongodb";
 import CourierCharge from "../../../models/CourierCharge";
 import { getCurrentUser } from "../../../lib/authUtils";
 
-// PUT - Update a courier charge
+// app/api/courier-charges/[id]/route.js
 export async function PUT(request, { params }) {
   try {
-    // 1. Authenticate - Allow role 1 and 2
+    // 1. Authenticate
     const token = request.cookies.get("auth_token")?.value;
     if (!token) {
       return NextResponse.json(
@@ -40,10 +40,16 @@ export async function PUT(request, { params }) {
     }
 
     // 2. Get data
-    const { weightFrom, weightTo, insideDhaka, outsideDhaka } = await request.json();
+    const { weightFrom, weightTo, insideDhaka, outsideDhaka } =
+      await request.json();
 
     // 3. Validate
-    if (weightFrom === undefined || weightTo === undefined || insideDhaka === undefined || outsideDhaka === undefined) {
+    if (
+      weightFrom === undefined ||
+      weightTo === undefined ||
+      insideDhaka === undefined ||
+      outsideDhaka === undefined
+    ) {
       return NextResponse.json(
         {
           success: false,
@@ -96,17 +102,8 @@ export async function PUT(request, { params }) {
       );
     }
 
-    // 6. Update charge
-    const charge = await CourierCharge.findByIdAndUpdate(
-      id,
-      {
-        weightFrom,
-        weightTo,
-        insideDhaka,
-        outsideDhaka,
-      },
-      { new: true, runValidators: true }
-    );
+    // 6. Find the charge
+    const charge = await CourierCharge.findById(id);
 
     if (!charge) {
       return NextResponse.json(
@@ -117,6 +114,15 @@ export async function PUT(request, { params }) {
         { status: 404 },
       );
     }
+
+    // 7. Update the charge
+    charge.weightFrom = weightFrom;
+    charge.weightTo = weightTo;
+    charge.insideDhaka = insideDhaka;
+    charge.outsideDhaka = outsideDhaka;
+
+    // 8. Save (this will run validators correctly)
+    await charge.save();
 
     return NextResponse.json({
       success: true,
