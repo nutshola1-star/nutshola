@@ -114,7 +114,7 @@ const Footer = () => {
             <ul className="space-y-3 text-sm text-white/70">
               <li className="flex items-start gap-3">
                 <FaMapMarkerAlt className="text-[#7ECB2A] mt-0.5 flex-shrink-0" />
-                <span>Boardbazar, Gazipur, Bangladesh</span>
+                <span>West Matikata, Dhaka Cantonment, Dhaka 1206</span>
               </li>
               <li className="flex items-center gap-3">
                 <FaPhone className="text-[#7ECB2A] flex-shrink-0" />
@@ -131,7 +131,7 @@ const Footer = () => {
                   href="mailto:nutshola1@gmail.com"
                   className="hover:text-white transition-colors"
                 >
-                  nutshola1@gmail.com
+                  nutshola.bd@gmail.com
                 </a>
               </li>
             </ul>

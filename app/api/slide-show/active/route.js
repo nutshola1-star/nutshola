@@ -1,5 +1,4 @@
-//app/api/slide-show/active/route.js
-
+// app/api/slide-show/active/route.js
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "../../../lib/mongodb";
 import SlideImage from "../../../models/SlideImage";
@@ -11,7 +10,7 @@ export async function GET() {
     
     const slides = await SlideImage.find({ isActive: true })
       .sort({ createdAt: -1 })
-      .select("image isActive createdAt");
+      .select("image link type isActive createdAt");
 
     return NextResponse.json({
       success: true,

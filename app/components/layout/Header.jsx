@@ -583,7 +583,7 @@ const Header = () => {
       <MobileMenu />
 
       {/* Category Header */}
-      <div className="w-full bg-[#7ECB2A] h-7 text-white text-sm font-semibold py-1 hidden md:flex items-center justify-center overflow-x-auto">
+      <div className="w-full bg-[#7ECB2A] h-10 text-white text-sm font-semibold py-1 hidden md:flex items-center justify-center overflow-x-auto">
         {catfetchLoading ? (
           Array.from({ length: 10 }).map((_, index) => (
             <div
@@ -599,7 +599,8 @@ const Header = () => {
           <>
             <Link
               href="/all-products"
-              className="px-4 py-1 hover:bg-white/20 transition-colors whitespace-nowrap rounded"
+              className="px-4 py-1 font-thin text-xl hover:bg-white/20 transition-colors whitespace-nowrap rounded"
+              style={{ fontFamily: 'Roboto, sans-serif' }}
             >
               All
             </Link>
@@ -607,7 +608,8 @@ const Header = () => {
               <Link
                 key={category._id}
                 href={`/categories/${category.slug}`}
-                className="px-4 py-1 hover:bg-white/20 transition-colors whitespace-nowrap rounded"
+                className="px-4 py-1 font-thin text-xl hover:bg-white/20 transition-colors whitespace-nowrap rounded"
+                style={{ fontFamily: 'Roboto, sans-serif' }}
               >
                 {category.name}
               </Link>

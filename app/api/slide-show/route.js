@@ -13,7 +13,7 @@ export async function GET() {
     
     const slides = await SlideImage.find({})
       .sort({ createdAt: -1 })
-      .select("image isActive createdAt");
+      .select("image link type isActive createdAt");
 
     return NextResponse.json({
       success: true,
@@ -114,6 +114,8 @@ export async function POST(request) {
       // 7. Save to database
       const slide = new SlideImage({
         image: result.secure_url,
+        link: "",
+        type: "main", // Default type
         isActive: true,
       });
 
@@ -125,6 +127,8 @@ export async function POST(request) {
         slide: {
           _id: slide._id,
           image: slide.image,
+          link: slide.link,
+          type: slide.type,
           isActive: slide.isActive,
           createdAt: slide.createdAt,
         },
@@ -301,6 +305,119 @@ export async function PUT(request) {
     return NextResponse.json({
       success: true,
       message: "Slide status updated successfully",
+      slide,
+    });
+  } catch (error) {
+    console.error("Update slide error:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Failed to update slide",
+        error: error.message,
+      },
+      { status: 500 },
+    );
+  }
+}
+
+// PATCH - Update slide link or type
+export async function PATCH(request) {
+  try {
+    // 1. Authenticate - Allow role 1 and 2
+    const token = request.cookies.get("auth_token")?.value;
+    if (!token) {
+      return NextResponse.json(
+        { success: false, message: "Not authenticated" },
+        { status: 401 },
+      );
+    }
+
+    const currentUser = getCurrentUser(token);
+    if (!currentUser || (currentUser.role !== 1 && currentUser.role !== 2)) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          message: "Unauthorized: Admin or Editor access required" 
+        },
+        { status: 403 },
+      );
+    }
+
+    // 2. Get data
+    const { slideId, link, type } = await request.json();
+
+    if (!slideId) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Slide ID is required",
+        },
+        { status: 400 },
+      );
+    }
+
+    // 3. Build update object
+    const updateData = {};
+    if (link !== undefined) {
+      if (link !== "" && !/^(https?:\/\/)/.test(link)) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "Link must be a valid URL or empty",
+          },
+          { status: 400 },
+        );
+      }
+      updateData.link = link || "";
+    }
+    
+    if (type !== undefined) {
+      const validTypes = ['main', 'fixed-right-1', 'fixed-right-2'];
+      if (!validTypes.includes(type)) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "Invalid slide type",
+          },
+          { status: 400 },
+        );
+      }
+      updateData.type = type;
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "No valid fields to update",
+        },
+        { status: 400 },
+      );
+    }
+
+    // 4. Connect to database
+    await connectToDatabase();
+
+    // 5. Update slide
+    const slide = await SlideImage.findByIdAndUpdate(
+      slideId,
+      updateData,
+      { new: true }
+    );
+
+    if (!slide) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Slide not found",
+        },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Slide updated successfully",
       slide,
     });
   } catch (error) {

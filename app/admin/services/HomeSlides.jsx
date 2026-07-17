@@ -1,8 +1,9 @@
+// app/admin/services/HomeSlides.jsx
 "use client";
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { FaUpload, FaTrash, FaSpinner } from 'react-icons/fa';
+import { FaUpload, FaTrash, FaSpinner, FaLink } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -46,12 +47,118 @@ const ToggleSwitch = ({ isActive, onToggle }) => {
   );
 };
 
+// Link Input Component
+const LinkInput = ({ slideId, currentLink, onUpdate }) => {
+  const [link, setLink] = useState(currentLink || '');
+  const [isEditing, setIsEditing] = useState(false);
+  const [updating, setUpdating] = useState(false);
+
+  const handleSave = async () => {
+    setUpdating(true);
+    try {
+      const res = await fetch('/api/slide-show', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          slideId,
+          link: link.trim(),
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        toast.success('Link updated successfully!');
+        onUpdate(slideId, link.trim());
+        setIsEditing(false);
+      } else {
+        toast.error(data.message || 'Failed to update link');
+      }
+    } catch (error) {
+      toast.error('Error updating link: ' + error.message);
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  if (!isEditing) {
+    return (
+      <div className="flex items-center gap-2 mt-1">
+        <FaLink className="text-gray-400 text-xs" />
+        <span className="text-xs text-gray-500 truncate max-w-[120px]">
+          {currentLink || 'No link'}
+        </span>
+        <button
+          onClick={() => setIsEditing(true)}
+          className="text-xs text-[#559F34] hover:text-[#45802A] ml-auto"
+        >
+          Edit
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-2 mt-1">
+      <input
+        type="url"
+        value={link}
+        onChange={(e) => setLink(e.target.value)}
+        placeholder="Enter URL (leave empty for no link)"
+        className="flex-1 text-xs border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#559F34]"
+        disabled={updating}
+        autoFocus
+      />
+      <button
+        onClick={handleSave}
+        disabled={updating}
+        className="text-xs bg-[#559F34] text-white px-2 py-1 rounded hover:bg-[#45802A] disabled:opacity-50"
+      >
+        {updating ? <FaSpinner className="animate-spin" /> : 'Save'}
+      </button>
+      <button
+        onClick={() => {
+          setIsEditing(false);
+          setLink(currentLink || '');
+        }}
+        disabled={updating}
+        className="text-xs bg-gray-300 text-gray-700 px-2 py-1 rounded hover:bg-gray-400 disabled:opacity-50"
+      >
+        Cancel
+      </button>
+    </div>
+  );
+};
+
+// Type Badge Component
+const TypeBadge = ({ type }) => {
+  const typeColors = {
+    'main': 'bg-blue-500',
+    'fixed-right-1': 'bg-purple-500',
+    'fixed-right-2': 'bg-pink-500',
+  };
+  
+  const typeLabels = {
+    'main': 'Main Slide',
+    'fixed-right-1': 'Fixed Right 1',
+    'fixed-right-2': 'Fixed Right 2',
+  };
+
+  return (
+    <span className={`px-2 py-1 rounded-full text-xs font-medium text-white ${typeColors[type] || 'bg-gray-500'}`}>
+      {typeLabels[type] || type}
+    </span>
+  );
+};
+
 const HomeSlides = () => {
   const [slides, setSlides] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
   const [togglingId, setTogglingId] = useState(null);
+  const [changingTypeId, setChangingTypeId] = useState(null);
   const { user } = useAuth();
 
   // Check if user has admin/editor role (role 1 or 2)
@@ -200,6 +307,62 @@ const HomeSlides = () => {
     }
   };
 
+  // Change slide type
+  const handleChangeType = async (slideId, newType) => {
+    setChangingTypeId(slideId);
+    const loadingToast = toast.loading('Updating slide type...');
+
+    try {
+      const res = await fetch('/api/slide-show', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          slideId,
+          type: newType,
+        }),
+      });
+
+      const data = await res.json();
+
+      toast.dismiss(loadingToast);
+
+      if (data.success) {
+        toast.success(`Slide type updated successfully!`);
+        await fetchSlides();
+      } else {
+        toast.error(data.message || 'Failed to update slide type');
+      }
+    } catch (error) {
+      toast.dismiss(loadingToast);
+      toast.error('Error updating slide type: ' + error.message);
+    } finally {
+      setChangingTypeId(null);
+    }
+  };
+
+  // Handle link update
+  const handleLinkUpdate = (slideId, newLink) => {
+    setSlides(prevSlides =>
+      prevSlides.map(slide =>
+        slide._id === slideId
+          ? { ...slide, link: newLink }
+          : slide
+      )
+    );
+  };
+
+  // Get type options for dropdown
+  const getTypeOptions = () => {
+    const options = [
+      { value: 'main', label: 'Main Slide' },
+      { value: 'fixed-right-1', label: 'Fixed Right 1' },
+      { value: 'fixed-right-2', label: 'Fixed Right 2' },
+    ];
+    return options;
+  };
+
   // Show loading shimmer
   if (loading) {
     return (
@@ -304,7 +467,7 @@ const HomeSlides = () => {
           <p className="text-gray-500">No slides uploaded yet</p>
           {isAdmin && (
             <p className="text-sm text-gray-400 mt-2">
-              Click {"'Upload Slide'"} to add your first slide
+              Click {'"Upload Slide"'} to add your first slide
             </p>
           )}
         </div>
@@ -339,6 +502,11 @@ const HomeSlides = () => {
                 </span>
               </div>
 
+              {/* Type Badge */}
+              <div className="absolute top-12 right-2">
+                <TypeBadge type={slide.type || 'main'} />
+              </div>
+
               {/* Index Badge */}
               <div className="absolute top-2 left-2 bg-black/50 text-white px-2 py-1 rounded-full text-xs">
                 #{index + 1}
@@ -353,37 +521,66 @@ const HomeSlides = () => {
                 })}
               </div>
 
-              {/* Admin Controls - Always Visible */}
+              {/* Admin Controls */}
               {isAdmin && (
-                <div className="absolute bottom-2 right-2 flex items-center gap-2 bg-black/50 backdrop-blur-sm px-2 py-1.5 rounded-lg">
-                  {/* Toggle Switch */}
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] text-white font-medium">
-                      {slide.isActive ? 'ON' : 'OFF'}
-                    </span>
-                    {togglingId === slide._id ? (
+                <div className="absolute bottom-2 right-2 flex flex-col items-end gap-1 bg-black/50 backdrop-blur-sm p-2 rounded-lg min-w-[160px]">
+                  {/* Type Selector */}
+                  <div className="flex items-center gap-2 w-full">
+                    <select
+                      value={slide.type || 'main'}
+                      onChange={(e) => handleChangeType(slide._id, e.target.value)}
+                      disabled={changingTypeId === slide._id}
+                      className="text-xs bg-white/90 text-gray-800 rounded px-2 py-1 w-full focus:outline-none focus:ring-1 focus:ring-[#559F34] disabled:opacity-50"
+                    >
+                      {getTypeOptions().map(option => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                    {changingTypeId === slide._id && (
                       <FaSpinner className="animate-spin text-white text-sm" />
-                    ) : (
-                      <ToggleSwitch
-                        isActive={slide.isActive}
-                        onToggle={() => handleToggleActive(slide._id, slide.isActive)}
-                      />
                     )}
                   </div>
+                  
+                  {/* Link Section */}
+                  <LinkInput
+                    slideId={slide._id}
+                    currentLink={slide.link || ''}
+                    onUpdate={handleLinkUpdate}
+                  />
+                  
+                  {/* Controls Row */}
+                  <div className="flex items-center gap-2 w-full justify-end">
+                    {/* Toggle Switch */}
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] text-white font-medium">
+                        {slide.isActive ? 'ON' : 'OFF'}
+                      </span>
+                      {togglingId === slide._id ? (
+                        <FaSpinner className="animate-spin text-white text-sm" />
+                      ) : (
+                        <ToggleSwitch
+                          isActive={slide.isActive}
+                          onToggle={() => handleToggleActive(slide._id, slide.isActive)}
+                        />
+                      )}
+                    </div>
 
-                  {/* Delete Button */}
-                  <button
-                    onClick={() => handleDelete(slide._id)}
-                    disabled={deletingId === slide._id}
-                    className="p-1.5 rounded-md bg-red-500 hover:bg-red-600 disabled:bg-red-300 text-white transition-colors"
-                    title="Delete slide"
-                  >
-                    {deletingId === slide._id ? (
-                      <FaSpinner className="animate-spin text-sm" />
-                    ) : (
-                      <FaTrash className="text-sm" />
-                    )}
-                  </button>
+                    {/* Delete Button */}
+                    <button
+                      onClick={() => handleDelete(slide._id)}
+                      disabled={deletingId === slide._id}
+                      className="p-1.5 rounded-md bg-red-500 hover:bg-red-600 disabled:bg-red-300 text-white transition-colors"
+                      title="Delete slide"
+                    >
+                      {deletingId === slide._id ? (
+                        <FaSpinner className="animate-spin text-sm" />
+                      ) : (
+                        <FaTrash className="text-sm" />
+                      )}
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

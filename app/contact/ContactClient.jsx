@@ -99,15 +99,15 @@ const ContactClient = () => {
     {
       icon: <FaEnvelope className="text-2xl" />,
       title: "Email Us",
-      details: "nutshola1@gmail.com",
-      link: "mailto:nutshola1@gmail.com",
+      details: "nutshola.bd@gmail.com",
+      link: "mailto:nutshola.bd@gmail.com",
       color: "bg-red-100 text-red-600",
     },
     {
       icon: <FaMapMarkerAlt className="text-2xl" />,
       title: "Visit Us",
-      details: "Board Bazar, Gazipur, Bangladesh",
-      link: "https://maps.google.com/?q=Board+Bazar+Gazipur+Bangladesh",
+      details: "West Matikata, Dhaka Cantonment, Dhaka 1206",
+      link: "https://www.google.com/maps/place/Matikata+Bazar/@23.8185195,90.3925431,17.68z/data=!4m14!1m7!3m6!1s0x3755c7005f48b405:0x7572fb7bbc465773!2sWest+matikata!8m2!3d23.8371582!4d90.3913172!16s%2Fg%2F11z588ynnz!3m5!1s0x3755c6e70bdbb3e5:0x8332496368333f5c!8m2!3d23.8190178!4d90.3950686!16s%2Fg%2F11f3xx9b8h?entry=ttu&g_ep=EgoyMDI2MDcxMi4wIKXMDSoASAFQAw%3D%3D",
       color: "bg-purple-100 text-purple-600",
     },
   ];
@@ -275,10 +275,10 @@ const ContactClient = () => {
               <p className="text-sm text-gray-600 text-center">
                 Prefer direct email?{" "}
                 <a
-                  href="mailto:nutshola1@gmail.com"
+                  href="mailto:nutshola.bd@gmail.com"
                   className="text-[#559F34] font-semibold hover:underline"
                 >
-                  nutshola1@gmail.com
+                  nutshola.bd@gmail.com
                 </a>
               </p>
             </div>
@@ -296,7 +296,7 @@ const ContactClient = () => {
               </div>
               <div className="p-2">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d29203.79392447408!2d90.3873928!3d23.9328969!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c49e4d2afbc7%3A0x93f5ba5c19d5622!2sBoard%20Bazar%2C%20Gazipur!5e0!3m2!1sen!2sbd!4v1700000000000!5m2!1sen!2sbd"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2270.8352709573337!2d90.39254311205194!3d23.818519522473537!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c6e70bdbb3e5%3A0x8332496368333f5c!2sMatikata%20Bazar!5e0!3m2!1sen!2sbd!4v1784046630123!5m2!1sen!2sbd"
                   width="100%"
                   height="300"
                   style={{ border: 0 }}
@@ -309,7 +309,7 @@ const ContactClient = () => {
                 <div className="p-4 bg-gray-50 rounded-b-lg">
                   <p className="text-[#3A393D] font-medium flex items-center gap-2">
                     <FaMapMarkerAlt className="text-[#559F34]" />
-                    Board Bazar, Gazipur, Bangladesh
+                    West Matikata, Dhaka Cantonment, Dhaka 1206
                   </p>
                 </div>
               </div>

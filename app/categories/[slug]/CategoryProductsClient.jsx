@@ -369,9 +369,6 @@ const CategoryProductsClient = ({ slug }) => {
               {category?.bengaliName && (
                 <p className="text-sm text-center text-gray-500">{category.bengaliName}</p>
               )}
-              <p className="text-gray-600 text-center text-sm md:text-base mt-1">
-                Total {totalProducts} products found
-              </p>
             </div>
           </div>
         </div>

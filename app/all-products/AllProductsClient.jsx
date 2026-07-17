@@ -372,9 +372,6 @@ const AllProductsContent = () => {
           <h1 className="text-xl md:text-3xl font-bold text-[#3A393D] text-center">
             Our Products
           </h1>
-          <p className="text-center text-gray-600 text-sm md:text-base mt-1 md:mt-2">
-            Total {totalProducts} products found
-          </p>
         </div>
 
         {/* Filter Bar */}
